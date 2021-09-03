@@ -60,7 +60,15 @@ func restartNgx() {
 	util.Logger().Info("shell result ", zap.String("stdout", stdout), zap.String("stderr", stderr))
 }
 
-func generateNgxConf() error {
+func generateNgxConf() (err error) {
+	err = generateStaticTcpRoute()
+	if err != nil {
+		return
+	}
 	// todo
+	return nil
+}
+
+func generateStaticTcpRoute() error {
 	return nil
 }

@@ -8,6 +8,8 @@ FROM ttbb/nginx:openresty
 
 LABEL maintainer="shoothzj@gmail.com"
 
+ENV OPENRESTY_HOME /opt/sh/openresty
+
 COPY docker-build /opt/sh/openresty/mate
 
 COPY --from=build /opt/sh/compile/pkg/nginx_mate /opt/sh/openresty/mate/nginx_mate

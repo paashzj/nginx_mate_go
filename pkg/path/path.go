@@ -7,16 +7,18 @@ import (
 
 // nginx
 var (
-	OpenRestyHome                   = os.Getenv("OPENRESTY_HOME")
-	NginxHome                       = filepath.FromSlash(OpenRestyHome + "/nginx")
-	NginxConfDir                    = filepath.FromSlash(NginxHome + "/conf")
-	NginxMainConf                   = filepath.FromSlash(NginxConfDir + "/nginx.conf")
+	OpenRestyHome = os.Getenv("OPENRESTY_HOME")
+	NginxHome     = filepath.FromSlash(OpenRestyHome + "/nginx")
+	NginxConfDir  = filepath.FromSlash(NginxHome + "/conf")
+	NginxMainConf = filepath.FromSlash(NginxConfDir + "/nginx.conf")
 )
 
 // mate
 var (
-	OpenRestyMatePath  = filepath.FromSlash(OpenRestyHome + "/mate")
-	OpenRestyScripts   = filepath.FromSlash(OpenRestyMatePath + "/scripts")
-	NginxStartScript   = filepath.FromSlash(OpenRestyScripts + "/start-nginx.sh")
-	NginxRestartScript = filepath.FromSlash(OpenRestyScripts + "/restart-nginx.sh")
+	OpenRestyMatePath   = filepath.FromSlash(OpenRestyHome + "/mate")
+	OpenRestyScripts    = filepath.FromSlash(OpenRestyMatePath + "/scripts")
+	NginxStartScript    = filepath.FromSlash(OpenRestyScripts + "/start-nginx.sh")
+	NginxRestartScript  = filepath.FromSlash(OpenRestyScripts + "/restart-nginx.sh")
+	NginxStorage        = filepath.FromSlash(OpenRestyMatePath + "/storage")
+	NginxStaticTcpRoute = filepath.FromSlash(NginxStorage + "/static-tcp-route")
 )
