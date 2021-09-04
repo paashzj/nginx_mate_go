@@ -1,10 +1,16 @@
 package nginx
 
 import (
+	"encoding/json"
 	"github.com/paashzj/gutil"
 	"go.uber.org/zap"
+	"io/fs"
+	"io/ioutil"
+	"nginx_mate_go/pkg/module"
 	"nginx_mate_go/pkg/path"
 	"nginx_mate_go/pkg/util"
+	"os"
+	"path/filepath"
 )
 
 var ReloadChannel = make(chan struct{})
@@ -38,12 +44,11 @@ func startNgx() {
 		util.Logger().Error("generate ngx config file failed ", zap.Error(err))
 		return
 	}
-	stdout, stderr, err := gutil.CallScript("bash -x " + path.NginxStartScript)
+	err = startNginxPlatform()
 	if err != nil {
 		util.Logger().Error("run start ngx scripts failed ", zap.Error(err))
 		return
 	}
-	util.Logger().Info("shell result ", zap.String("stdout", stdout), zap.String("stderr", stderr))
 }
 
 func restartNgx() {
@@ -52,12 +57,11 @@ func restartNgx() {
 		util.Logger().Error("generate ngx config file failed ", zap.Error(err))
 		return
 	}
-	stdout, stderr, err := gutil.CallScript("bash -x " + path.NginxRestartScript)
+	err = restartNginxPlatform()
 	if err != nil {
 		util.Logger().Error("run restart ngx scripts failed ", zap.Error(err))
 		return
 	}
-	util.Logger().Info("shell result ", zap.String("stdout", stdout), zap.String("stderr", stderr))
 }
 
 func generateNgxConf() (err error) {
@@ -69,6 +73,37 @@ func generateNgxConf() (err error) {
 	return nil
 }
 
-func generateStaticTcpRoute() error {
+func generateStaticTcpRoute() (err error) {
+	err = os.RemoveAll(filepath.FromSlash(path.NginxStaticTcpRouteDir))
+	if err != nil {
+		return
+	}
+	err = os.Mkdir(filepath.FromSlash(path.NginxStaticTcpRouteDir), os.FileMode(0777))
+	if err != nil {
+		util.Logger().Error("clean directory error")
+		return
+	}
+	// iterate the static route range
+	err = filepath.Walk(path.NginxStaticTcpRouteStorageDir, func(path string, info fs.FileInfo, err error) error {
+		if info == nil || info.IsDir() {
+			return nil
+		}
+		if filepath.Ext(path) == ".json" {
+			bytes, err := ioutil.ReadFile(path)
+			if err != nil {
+				return err
+			}
+			var req module.StaticTcpRouteAddReq
+			err = json.Unmarshal(bytes, &req)
+			if err != nil {
+				return err
+			}
+			return writeStaticTcpRouteConfig(req)
+		}
+		return nil
+	})
+	if err != nil {
+		return
+	}
 	return nil
 }

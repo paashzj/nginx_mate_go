@@ -1,8 +1,12 @@
 package module
 
 type StaticTcpRouteAddReq struct {
-	InPort  int    `json:"in_port"`
-	InSsl   bool   `json:"in_ssl"`
-	OutHost string `json:"out_host"`
-	OutPort int    `json:"out_port"`
+	InPort       int           `json:"in_port"`
+	InSsl        bool          `json:"in_ssl"`
+	OutEndpoints []OutEndpoint `json:"out_endpoints"`
+}
+
+type OutEndpoint struct {
+	Host string `json:"host"`
+	Port int    `json:"port"`
 }

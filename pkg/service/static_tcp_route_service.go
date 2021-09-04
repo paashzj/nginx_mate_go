@@ -11,7 +11,7 @@ import (
 
 func AddStaticTcpRoute(req module.StaticTcpRouteAddReq) error {
 	InPortStr := strconv.Itoa(req.InPort)
-	file, err := os.OpenFile(filepath.FromSlash(path.NginxStaticTcpRoute+"/route-"+InPortStr+"-v1.json"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, os.FileMode(0666))
+	file, err := os.OpenFile(filepath.FromSlash(path.NginxStaticTcpRouteStorageDir+"/route-"+InPortStr+"-v1.json"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, os.FileMode(0666))
 	if err != nil {
 		return err
 	}
@@ -21,12 +21,9 @@ func AddStaticTcpRoute(req module.StaticTcpRouteAddReq) error {
 		return err
 	}
 	_, err = file.Write(bytes)
-	if err != nil {
-		return err
-	}
 	return err
 }
 
 func DelStaticTcpRoute(port string) error {
-	return os.Remove(filepath.FromSlash(path.NginxStaticTcpRoute + "/route-" + port + "-v1.json"))
+	return os.Remove(filepath.FromSlash(path.NginxStaticTcpRouteStorageDir + "/route-" + port + "-v1.json"))
 }
