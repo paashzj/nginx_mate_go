@@ -1,29 +1,17 @@
 package service
 
 import (
-	"encoding/json"
+	"nginx_mate_go/pkg/constant"
 	"nginx_mate_go/pkg/module"
-	"nginx_mate_go/pkg/path"
-	"os"
-	"path/filepath"
+	"nginx_mate_go/pkg/storage"
 	"strconv"
 )
 
 func AddStaticTcpRoute(req module.StaticTcpRouteAddReq) error {
 	InPortStr := strconv.Itoa(req.InPort)
-	file, err := os.OpenFile(filepath.FromSlash(path.NginxStaticTcpRouteStorageDir+"/route-"+InPortStr+"-v1.json"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, os.FileMode(0666))
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-	bytes, err := json.Marshal(req)
-	if err != nil {
-		return err
-	}
-	_, err = file.Write(bytes)
-	return err
+	return storage.Acquire().Add(constant.StorageNsStaticTcpRoute, "route-"+InPortStr, req)
 }
 
 func DelStaticTcpRoute(port string) error {
-	return os.Remove(filepath.FromSlash(path.NginxStaticTcpRouteStorageDir + "/route-" + port + "-v1.json"))
+	return storage.Acquire().Del(constant.StorageNsStaticTcpRoute, "route-"+port)
 }

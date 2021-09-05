@@ -39,7 +39,7 @@ func writeStaticTcpRouteConfig(req module.StaticTcpRouteAddReq) error {
 	writer.WriteString("    listen ")
 	writer.WriteString(strconv.Itoa(req.InPort))
 	if req.InSsl {
-		writer.WriteString("ssl")
+		writer.WriteString(" ssl")
 	}
 	writer.WriteString(";\n")
 	if req.InSsl {

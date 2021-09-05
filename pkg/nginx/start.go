@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"github.com/paashzj/gutil"
 	"go.uber.org/zap"
-	"io/fs"
-	"io/ioutil"
+	"nginx_mate_go/pkg/constant"
 	"nginx_mate_go/pkg/module"
 	"nginx_mate_go/pkg/path"
+	"nginx_mate_go/pkg/storage"
 	"nginx_mate_go/pkg/util"
 	"os"
 	"path/filepath"
@@ -83,27 +83,24 @@ func generateStaticTcpRoute() (err error) {
 		util.Logger().Error("clean directory error")
 		return
 	}
-	// iterate the static route range
-	err = filepath.Walk(path.NginxStaticTcpRouteStorageDir, func(path string, info fs.FileInfo, err error) error {
-		if info == nil || info.IsDir() {
-			return nil
-		}
-		if filepath.Ext(path) == ".json" {
-			bytes, err := ioutil.ReadFile(path)
-			if err != nil {
-				return err
-			}
-			var req module.StaticTcpRouteAddReq
-			err = json.Unmarshal(bytes, &req)
-			if err != nil {
-				return err
-			}
-			return writeStaticTcpRouteConfig(req)
-		}
-		return nil
-	})
+	keyList, err := storage.Acquire().GetKeyList(constant.StorageNsStaticTcpRoute)
 	if err != nil {
 		return
+	}
+	for _, key := range keyList {
+		bytes, err := storage.Acquire().Get(constant.StorageNsStaticTcpRoute, key)
+		if err != nil {
+			return err
+		}
+		var req module.StaticTcpRouteAddReq
+		err = json.Unmarshal(bytes, &req)
+		if err != nil {
+			return err
+		}
+		err = writeStaticTcpRouteConfig(req)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
