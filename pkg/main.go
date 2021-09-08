@@ -5,8 +5,6 @@ import (
 	"nginx_mate_go/pkg/api"
 	"nginx_mate_go/pkg/nginx"
 	"nginx_mate_go/pkg/util"
-	"os"
-	"os/signal"
 )
 
 func main() {
@@ -22,13 +20,5 @@ func main() {
 	if err != nil {
 		util.Logger().Error("open http server failed")
 		return
-	}
-	interrupt := make(chan os.Signal, 1)
-	signal.Notify(interrupt, os.Interrupt)
-	for {
-		select {
-		case <-interrupt:
-			return
-		}
 	}
 }
