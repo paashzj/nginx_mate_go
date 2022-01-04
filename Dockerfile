@@ -16,4 +16,4 @@ COPY --from=build /opt/sh/compile/pkg/nginx_mate /opt/sh/openresty/mate/nginx_ma
 
 WORKDIR /opt/sh/openresty
 
-CMD ["/usr/local/bin/dumb-init", "bash", "-vx", "/opt/sh/openresty/mate/scripts/start.sh"]
+CMD ["/usr/bin/dumb-init", "bash", "-vx", "/opt/sh/openresty/mate/scripts/start.sh"]
